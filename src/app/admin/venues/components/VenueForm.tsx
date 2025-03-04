@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-
+import { CustomSession } from "@/app/types";
 interface Screen {
   name: string;
   capacity: number;
@@ -24,7 +24,7 @@ interface VenueFormData {
 
 export default function VenueForm() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session } = useSession() as { data: CustomSession | null };
   const [imagePreview, setImagePreview] = useState<string>("");
 
   const [formData, setFormData] = useState<VenueFormData>({
@@ -206,7 +206,7 @@ export default function VenueForm() {
               <Image
                 src={imagePreview}
                 alt="Venue preview"
-                width={96}  // 24 * 4 (standard conversion for Next.js Image)
+                width={96} // 24 * 4 (standard conversion for Next.js Image)
                 height={96}
                 className="object-cover rounded-lg w-full h-full"
               />

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { CustomSession } from "@/app/types";
 
 interface Venue {
   venue_id: string;
@@ -14,7 +15,7 @@ interface Venue {
 }
 
 export default function AdminVenuesPage() {
-  const { data: session } = useSession();
+  const { data: session } = useSession() as { data: CustomSession | null };
   const [venues, setVenues] = useState<Venue[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 

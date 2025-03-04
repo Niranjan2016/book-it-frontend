@@ -1,25 +1,5 @@
 import { SeatButton } from "./SeatButton";
-
-interface Seat {
-  seatId: number;
-  rowLabel: string;
-  seatNumber: number;
-  status: "available" | "booked";
-  price: number | string;
-  category: string;
-}
-
-interface Row {
-  rowNumber: number;
-  rowLabel: string;
-  seats: Seat[];
-}
-
-interface CategoryLayout {
-  categoryName: string;
-  basePrice: number | string;
-  rows: Row[];
-}
+import { Seat, CategoryLayout } from "@/app/types/seats";
 
 interface SeatingLayoutProps {
   layout: CategoryLayout[];

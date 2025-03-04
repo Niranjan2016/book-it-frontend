@@ -7,33 +7,9 @@ import { LoadingSpinner } from "@/app/components/shared/LoadingSpinner";
 import { CategoryLegend } from "@/app/components/seats/CategoryLegend";
 import { SeatingLayout } from "@/app/components/seats/SeatingLayout";
 import { PaymentSummary } from "@/app/components/seats/PaymentSummary";
+import { Seat, CategoryLayout } from "@/app/types/seats";
 
-interface Seat {
-  seatId: number;
-  rowLabel: string;
-  seatNumber: number;
-  status: "available" | "booked" | "selected";
-  price: number | string;
-  category: string;
-}
-
-interface Row {
-  rowNumber: number;
-  rowLabel: string;
-  seats: Seat[];
-}
-
-interface Category {
-  name: string;
-  basePrice: number | string;
-}
-
-interface CategoryLayout {
-  categoryName: string;
-  basePrice: number | string;
-  rows: Row[];
-}
-
+// Remove the duplicate interfaces and keep only ShowTimeDetails
 interface ShowTimeDetails {
   showtime_id: number;
   show_date: string;
@@ -62,6 +38,11 @@ interface ShowTimeDetails {
   };
 }
 
+interface Category {
+  name: string;
+  basePrice: number | string;
+}
+
 export default function SeatsPage() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -70,7 +51,8 @@ export default function SeatsPage() {
   const showTimeId = searchParams.get("showTime");
 
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
-  const [showTimeDetails, setShowTimeDetails] = useState<ShowTimeDetails | null>(null);
+  const [showTimeDetails, setShowTimeDetails] =
+    useState<ShowTimeDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -157,13 +139,16 @@ export default function SeatsPage() {
 
           <div className="text-center mb-12">
             <div className="w-full max-w-2xl mx-auto h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-2" />
-            <div className="w-3/4 h-[2px] bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-4 transform -skew-y-[4deg]" />
-            <p className="text-xs text-gray-400 uppercase tracking-wider">Screen</p>
+            <div className="w-3/4 h-[2px] bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-4 transform -skew-y-[0deg]" />
+            <p className="text-xs text-gray-400 uppercase tracking-wider">
+              Screen
+            </p>
           </div>
 
           <div className="overflow-x-auto">
             <div className="inline-block min-w-full">
-              {showTimeDetails.seats.layout ? (
+              {showTimeDetails?.seats?.layout &&
+              showTimeDetails.seats.layout.length > 0 ? (
                 <SeatingLayout
                   layout={showTimeDetails.seats.layout}
                   selectedSeats={selectedSeats}

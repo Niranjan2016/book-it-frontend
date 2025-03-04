@@ -18,7 +18,7 @@ interface Venue {
 
 export default function VenueDetailsPage() {
   // Move all state declarations together at the top
-  const { data: session } = useSession();
+  const { data: session } = useSession() as { data: CustomSession | null };
   const params = useParams();
   const [venue, setVenue] = useState<Venue | null>(null);
   const [isLoading, setIsLoading] = useState(true);
