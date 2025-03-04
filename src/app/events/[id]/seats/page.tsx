@@ -4,20 +4,62 @@ import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { BackButton } from "@/app/components/shared/BackButton";
 import { LoadingSpinner } from "@/app/components/shared/LoadingSpinner";
+import { CategoryLegend } from "@/app/components/seats/CategoryLegend";
+import { SeatingLayout } from "@/app/components/seats/SeatingLayout";
+import { PaymentSummary } from "@/app/components/seats/PaymentSummary";
 
 interface Seat {
-  id: string;
-  row: string;
-  number: number;
+  seatId: number;
+  rowLabel: string;
+  seatNumber: number;
   status: "available" | "booked" | "selected";
-  price: number;
+  price: number | string;
+  category: string;
+}
+
+interface Row {
+  rowNumber: number;
+  rowLabel: string;
+  seats: Seat[];
+}
+
+interface Category {
+  name: string;
+  basePrice: number | string;
+}
+
+interface CategoryLayout {
+  categoryName: string;
+  basePrice: number | string;
+  rows: Row[];
 }
 
 interface ShowTimeDetails {
-  id: string;
-  event_id: string;
-  seats: Seat[];
-  price: number;
+  showtime_id: number;
+  show_date: string;
+  start_time: string;
+  available_seats: number;
+  screen_id: number;
+  event_id: number;
+  screen: {
+    screen_id: number;
+    name: string;
+    capacity: number;
+    status: string;
+  };
+  event: {
+    event_id: number;
+    event_name: string;
+    ticket_price: string;
+  };
+  seats: {
+    totalCapacity: number;
+    availableSeats: number;
+    bookedSeats: number;
+    occupancyRate: string;
+    categories: Category[];
+    layout: CategoryLayout[];
+  };
 }
 
 export default function SeatsPage() {
@@ -28,8 +70,7 @@ export default function SeatsPage() {
   const showTimeId = searchParams.get("showTime");
 
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
-  const [showTimeDetails, setShowTimeDetails] =
-    useState<ShowTimeDetails | null>(null);
+  const [showTimeDetails, setShowTimeDetails] = useState<ShowTimeDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -57,9 +98,9 @@ export default function SeatsPage() {
     if (seat.status === "booked") return;
 
     setSelectedSeats((prev) => {
-      const isSelected = prev.find((s) => s.id === seat.id);
+      const isSelected = prev.find((s) => s.seatId === seat.seatId);
       if (isSelected) {
-        return prev.filter((s) => s.id !== seat.id);
+        return prev.filter((s) => s.seatId !== seat.seatId);
       }
       return [...prev, seat];
     });
@@ -77,9 +118,9 @@ export default function SeatsPage() {
           body: JSON.stringify({
             event_id: eventId,
             showtime_id: showTimeId,
-            seats: selectedSeats.map((seat) => seat.id),
+            seats: selectedSeats.map((seat) => seat.seatId),
             total_amount: selectedSeats.reduce(
-              (sum, seat) => sum + seat.price,
+              (sum, seat) => sum + parseFloat(seat.price.toString()),
               0
             ),
           }),
@@ -88,8 +129,6 @@ export default function SeatsPage() {
 
       if (!response.ok) throw new Error("Failed to create booking");
       const booking = await response.json();
-
-      // Redirect to payment page with booking ID
       router.push(`/payment?booking=${booking.id}`);
     } catch (error) {
       console.error("Error creating booking:", error);
@@ -105,61 +144,31 @@ export default function SeatsPage() {
         <BackButton />
 
         <div className="mt-8 bg-white rounded-lg shadow-md p-6">
-          <div className="text-center mb-8">
-            <div className="w-3/4 h-2 bg-gray-300 mx-auto mb-8 rounded-full" />
-            <p className="text-gray-500 text-sm">SCREEN THIS WAY</p>
+          <div className="mb-6 border-b pb-4">
+            <h1 className="text-2xl font-bold text-gray-800">
+              {showTimeDetails.event.event_name}
+            </h1>
+            <p className="text-gray-600">
+              {showTimeDetails.screen.name} | {showTimeDetails.start_time}
+            </p>
+          </div>
+
+          <CategoryLegend categories={showTimeDetails.seats.categories} />
+
+          <div className="text-center mb-12">
+            <div className="w-full max-w-2xl mx-auto h-1 bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-2" />
+            <div className="w-3/4 h-[2px] bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-4 transform -skew-y-[4deg]" />
+            <p className="text-xs text-gray-400 uppercase tracking-wider">Screen</p>
           </div>
 
           <div className="overflow-x-auto">
             <div className="inline-block min-w-full">
-              {showTimeDetails &&
-              showTimeDetails.seats &&
-              showTimeDetails.seats.length > 0 ? (
-                Object.entries(
-                  showTimeDetails.seats.reduce((acc, seat) => {
-                    if (!acc[seat.row]) acc[seat.row] = [];
-                    acc[seat.row].push(seat);
-                    return acc;
-                  }, {} as Record<string, Seat[]>)
-                )
-                  .sort()
-                  .map(([row, seats]) => (
-                    <div key={row} className="flex justify-center gap-2 mb-2">
-                      <div className="w-8 text-center text-gray-500 pt-2">
-                        {row}
-                      </div>
-                      {seats
-                        .sort((a, b) => a.number - b.number)
-                        .map((seat) => {
-                          const isSelected = selectedSeats.find(
-                            (s) => s.id === seat.id
-                          );
-
-                          return (
-                            <button
-                              key={seat.id}
-                              onClick={() => handleSeatClick(seat)}
-                              className={`
-                          w-8 h-8 rounded-t-lg text-xs font-medium
-                          ${
-                            seat.status === "booked"
-                              ? "bg-gray-400 text-white cursor-not-allowed"
-                              : isSelected
-                              ? "bg-pink-600 text-white"
-                              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                          }
-                        `}
-                              disabled={seat.status === "booked"}
-                            >
-                              {seat.number}
-                            </button>
-                          );
-                        })}
-                      <div className="w-8 text-center text-gray-500 pt-2">
-                        {row}
-                      </div>
-                    </div>
-                  ))
+              {showTimeDetails.seats.layout ? (
+                <SeatingLayout
+                  layout={showTimeDetails.seats.layout}
+                  selectedSeats={selectedSeats}
+                  onSeatClick={handleSeatClick}
+                />
               ) : (
                 <div className="text-center text-gray-500">
                   No seats available
@@ -168,41 +177,10 @@ export default function SeatsPage() {
             </div>
           </div>
 
-          <div className="mt-8 border-t pt-6">
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex gap-6">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-gray-100 rounded-t-sm" />
-                  <span className="text-sm text-gray-600">Available</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-pink-600 rounded-t-sm" />
-                  <span className="text-sm text-gray-600">Selected</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-gray-400 rounded-t-sm" />
-                  <span className="text-sm text-gray-600">Booked</span>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-600">
-                  Selected Seats: {selectedSeats.length}
-                </p>
-                <p className="text-lg font-bold text-pink-600">
-                  Total: ₹
-                  {selectedSeats.reduce((sum, seat) => sum + seat.price, 0)}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleProceedToPayment}
-              className="w-full bg-pink-600 text-white py-3 rounded-lg text-lg font-semibold 
-                                hover:bg-pink-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
-              disabled={selectedSeats.length === 0}
-            >
-              Proceed to Payment
-            </button>
-          </div>
+          <PaymentSummary
+            selectedSeats={selectedSeats}
+            onProceed={handleProceedToPayment}
+          />
         </div>
       </div>
     </div>

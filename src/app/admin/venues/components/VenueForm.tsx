@@ -206,6 +206,8 @@ export default function VenueForm() {
               <Image
                 src={imagePreview}
                 alt="Venue preview"
+                width={96}  // 24 * 4 (standard conversion for Next.js Image)
+                height={96}
                 className="object-cover rounded-lg w-full h-full"
               />
             </div>

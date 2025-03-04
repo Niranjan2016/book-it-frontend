@@ -98,7 +98,6 @@ export const ShowTimes = ({ showTimes, eventId }: ShowTimesProps) => {
                   className="group relative px-6 py-3 border-2 border-pink-600 text-pink-600 rounded-md 
                     hover:bg-pink-600 hover:text-white transition-colors"
                 >
-                  {JSON.stringify(showTime)}
                   <div className="text-lg font-semibold">{timeString}</div>
                   <div className="text-sm opacity-75">
                     {showTime.available_seats} seats available

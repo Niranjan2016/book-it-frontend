@@ -21,7 +21,7 @@ export default function AdminVenuesPage() {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
           throw new Error("No authentication token found");
         }
