@@ -22,8 +22,7 @@ export default function AdminVenuesPage() {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
+        if (!session?.user?.accessToken) {
           throw new Error("No authentication token found");
         }
 
@@ -32,7 +31,7 @@ export default function AdminVenuesPage() {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${session.user.accessToken}`,
               "Content-Type": "application/json",
             },
             credentials: "include",

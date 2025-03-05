@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { CustomSession } from "@/app/types";
 
 interface Venue {
   venue_id: string;
