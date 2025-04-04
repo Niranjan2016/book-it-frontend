@@ -152,25 +152,25 @@ export default function Dashboard() {
   });
   const totalPages = Math.ceil(filteredVenues.length / venuesPerPage);
   // Show loading state while auth is initializing or data is loading
-    if (authLoading || isLoading) {
-      return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-800"></div>
-        </div>
-      );
-    }
-  
+  if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <div className="container mx-auto p-8">
-          <Filters
-            selectedEventType={selectedEventType}
-            setSelectedEventType={setSelectedEventType}
-            priceRange={priceRange}
-            setPriceRange={setPriceRange}
-            categories={categories}
-            setCurrentPage={setCurrentPage}
-          />
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-800"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 text-black">
+      <div className="container mx-auto p-8">
+        <Filters
+          selectedEventType={selectedEventType}
+          setSelectedEventType={setSelectedEventType}
+          priceRange={priceRange}
+          setPriceRange={setPriceRange}
+          categories={categories}
+          setCurrentPage={setCurrentPage}
+        />
         <div className="space-y-6">
           {currentVenues && currentVenues.length > 0 ? (
             <>

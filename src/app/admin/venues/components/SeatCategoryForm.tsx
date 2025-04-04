@@ -5,7 +5,10 @@ interface SeatCategoryFormProps {
   onCategoryChange: (field: keyof SeatCategory, value: string | number) => void;
 }
 
-export function SeatCategoryForm({ category, onCategoryChange }: SeatCategoryFormProps) {
+export function SeatCategoryForm({
+  category,
+  onCategoryChange,
+}: SeatCategoryFormProps) {
   return (
     <div className="border-t pt-4 mb-4">
       <div className="grid grid-cols-3 gap-4">
@@ -17,7 +20,7 @@ export function SeatCategoryForm({ category, onCategoryChange }: SeatCategoryFor
             type="text"
             value={category.name}
             onChange={(e) => onCategoryChange("name", e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             required
           />
         </div>
@@ -30,8 +33,10 @@ export function SeatCategoryForm({ category, onCategoryChange }: SeatCategoryFor
             type="number"
             step="0.1"
             value={category.price_multiplier}
-            onChange={(e) => onCategoryChange("price_multiplier", parseFloat(e.target.value))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
+            onChange={(e) =>
+              onCategoryChange("price_multiplier", parseFloat(e.target.value))
+            }
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             required
           />
         </div>
@@ -43,7 +48,7 @@ export function SeatCategoryForm({ category, onCategoryChange }: SeatCategoryFor
           <select
             value={category.position}
             onChange={(e) => onCategoryChange("position", e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             required
           >
             <option value="FRONT">Front</option>
@@ -59,8 +64,10 @@ export function SeatCategoryForm({ category, onCategoryChange }: SeatCategoryFor
           <input
             type="number"
             value={category.rows_from}
-            onChange={(e) => onCategoryChange("rows_from", parseInt(e.target.value))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
+            onChange={(e) =>
+              onCategoryChange("rows_from", parseInt(e.target.value))
+            }
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             required
           />
         </div>
@@ -72,8 +79,10 @@ export function SeatCategoryForm({ category, onCategoryChange }: SeatCategoryFor
           <input
             type="number"
             value={category.rows_to}
-            onChange={(e) => onCategoryChange("rows_to", parseInt(e.target.value))}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
+            onChange={(e) =>
+              onCategoryChange("rows_to", parseInt(e.target.value))
+            }
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             required
           />
         </div>

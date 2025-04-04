@@ -159,14 +159,14 @@ export default function VenueDetailsPage() {
 
   if (!venue) {
     return (
-      <div className="p-6">
+      <div className="p-6 text-black">
         <p className="text-red-600">Venue not found</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-black">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Venue Details</h1>
         <button

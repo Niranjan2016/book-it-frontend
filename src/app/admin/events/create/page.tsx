@@ -6,6 +6,9 @@ import { Venue } from "@/app/types/";
 import { EventBasicInfo } from "@/app/admin/components/events/EventBasicInfo";
 import { ShowTimesList } from "@/app/admin/components/events/ShowTimesList";
 import { EventImageUpload } from "@/app/admin/components/events/EventImageUpload";
+import { toast, Toaster } from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import { CustomSession } from "@/app/types";
 
 export default function CreateEvent() {
   const router = useRouter();
@@ -115,12 +118,91 @@ export default function CreateEvent() {
     }
   };
 
+  const { data: session } = useSession() as { data: CustomSession | null };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!session?.user?.accessToken) {
+          throw new Error("No authentication token found");
+        }
+
+        const [venuesResponse, categoriesResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/venues`, {
+            headers: {
+              Authorization: `Bearer ${session.user.accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+            headers: {
+              Authorization: `Bearer ${session.user.accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }),
+        ]);
+
+        if (!venuesResponse.ok || !categoriesResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const [venuesData, categoriesData] = await Promise.all([
+          venuesResponse.json(),
+          categoriesResponse.json(),
+        ]);
+
+        setVenues(venuesData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Failed to load venues and categories");
+        router.push("/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [router, session]);
+
+  // Also update the handleSubmit function to use session token
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    // Validate form data
+    const errors = [];
+    if (!formData.event_name.trim()) errors.push("Event Name");
+    if (!formData.description.trim()) errors.push("Description");
+    if (!formData.start_date) errors.push("Start Date");
+    if (!formData.end_date) errors.push("End Date");
+    if (!formData.ticket_price) errors.push("Ticket Price");
+    if (!formData.venue_id) errors.push("Venue");
+    if (!formData.category_id) errors.push("Category");
+    if (!selectedImage) errors.push("Event Image");
+
+    // Validate show times
+    showTimes.forEach((showTime, index) => {
+      if (!showTime.screen_id) errors.push(`Screen for Show Time ${index + 1}`);
+      if (!showTime.start_time)
+        errors.push(`Start Time for Show Time ${index + 1}`);
+      if (!showTime.available_seats)
+        errors.push(`Available Seats for Show Time ${index + 1}`);
+    });
+
+    if (errors.length > 0) {
+      toast.error(
+        <div>
+          <div>Please fill in the following fields:</div>
+          {errors.map((error, index) => (
+            <div key={index}>• {error}</div>
+          ))}
+        </div>
+      );
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
+      if (!session?.user?.accessToken) {
         throw new Error("No authentication token found");
       }
 
@@ -147,7 +229,7 @@ export default function CreateEvent() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${session.user.accessToken}`,
           },
           body: eventFormData,
         }
@@ -158,66 +240,39 @@ export default function CreateEvent() {
         throw new Error(errorData.message || "Failed to create event");
       }
 
+      toast.success("Event created successfully!");
       router.push("/admin/events");
     } catch (error) {
       console.error("Error creating event:", error);
-      setError(
+      toast.error(
         error instanceof Error ? error.message : "Failed to create event"
       );
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const [venuesResponse, categoriesResponse] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/venues/admin`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }),
-        ]);
-
-        if (!venuesResponse.ok) {
-          throw new Error("Failed to fetch admin venues");
-        }
-
-        const [venuesData, categoriesData] = await Promise.all([
-          venuesResponse.json(),
-          categoriesResponse.json(),
-        ]);
-
-        setVenues(venuesData);
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        router.push("/login");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [router]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-600" />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#db27779e",
+            color: "#fff",
+            padding: "16px",
+          },
+          success: {
+            style: {
+              background: "#22c55e",
+            },
+          },
+          error: {
+            style: {
+              background: "#db27779e",
+            },
+          },
+        }}
+      />
       <div className="container mx-auto px-4 max-w-3xl">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Create New Event

@@ -13,7 +13,7 @@ export const AdminHeader = () => {
           </div>
           <nav className="flex items-center space-x-6">
             <button
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={() => signOut({ callbackUrl: "/admin/login" })}
               className="bg-pink-600 px-4 py-2 rounded hover:bg-pink-700 transition-colors"
             >
               Logout

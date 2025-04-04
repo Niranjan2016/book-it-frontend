@@ -7,6 +7,7 @@ import { CustomSession } from "@/app/types";
 import { VenueFormData, Screen, SeatCategory } from "@/app/types/venues";
 import { VenueDetailsForm } from "./VenueDetailsForm";
 import { ScreensSection } from "./ScreensSection";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function VenueForm() {
   const router = useRouter();
@@ -136,6 +137,40 @@ export default function VenueForm() {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate form data
+    const errors = [];
+    if (!formData.name.trim()) errors.push("Venue Name");
+    if (!formData.address.trim()) errors.push("Address");
+    if (!formData.city.trim()) errors.push("City");
+    if (!formData.contact_number.trim()) errors.push("Contact Number");
+    if (!formData.capacity || formData.capacity <= 0) errors.push("Capacity");
+
+    // Validate screens
+    formData.screens.forEach((screen, index) => {
+      if (!screen.name.trim()) errors.push(`Screen ${index + 1} Name`);
+      if (!screen.capacity || screen.capacity <= 0)
+        errors.push(`Screen ${index + 1} Capacity`);
+      if (!screen.rows || screen.rows <= 0)
+        errors.push(`Screen ${index + 1} Rows`);
+      if (!screen.seats_per_row || screen.seats_per_row <= 0)
+        errors.push(`Screen ${index + 1} Seats per Row`);
+      if (!screen.base_price || screen.base_price <= 0)
+        errors.push(`Screen ${index + 1} Base Price`);
+    });
+
+    if (errors.length > 0) {
+      toast.error(
+        <div>
+          <div>Please fill in the following fields:</div>
+          {errors.map((error, index) => (
+            <div key={index}>• {error}</div>
+          ))}
+        </div>
+      );
+      return;
+    }
+
     try {
       console.log("formData", formData);
       // Validate screens data
@@ -186,51 +221,78 @@ export default function VenueForm() {
 
       if (!response.ok) {
         const errorData = await response.text();
-        throw new Error(`Failed to create venue: ${errorData}`);
+        throw new Error(errorData);
       }
 
+      toast.success("Venue created successfully!");
       router.push("/admin/venues");
     } catch (error) {
       console.error("Error creating venue:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create venue"
+      );
     }
   };
-  // Update the form layout in VenueForm
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="container max-w-[1920px] mx-auto px-8 py-6"
-    >
-      <div className="space-y-8">
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <VenueDetailsForm
-            name={formData.name}
-            address={formData.address}
-            city={formData.city}
-            contact_number={formData.contact_number}
-            capacity={formData.capacity}
-            imagePreview={imagePreview}
-            onInputChange={handleInputChange}
-            onImageChange={handleImageChange}
-          />
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#db27779e",
+            color: "#fff",
+            padding: "16px",
+          },
+          success: {
+            style: {
+              background: "#22c55e",
+            },
+          },
+          error: {
+            style: {
+              background: "#db27779e",
+            },
+          },
+        }}
+      />
+      <form
+        onSubmit={handleSubmit}
+        className="container max-w-[1920px] mx-auto px-8 py-6"
+      >
+        <div className="space-y-8">
+          <div className="bg-white shadow-sm rounded-lg p-6">
+            <VenueDetailsForm
+              name={formData.name}
+              address={formData.address}
+              city={formData.city}
+              contact_number={formData.contact_number}
+              capacity={formData.capacity}
+              imagePreview={imagePreview}
+              onInputChange={handleInputChange}
+              onImageChange={handleImageChange}
+            />
+          </div>
+          <div className="bg-white shadow-sm rounded-lg p-6">
+            <ScreensSection
+              screens={formData.screens}
+              onScreenChange={handleScreenChange}
+              onSeatCategoryChange={handleSeatCategoryChange}
+              onAddScreen={addScreen}
+              onRemoveScreen={removeScreen}
+            />
+          </div>
+          <div>
+            <button
+              type="submit"
+              className="w-full bg-pink-600 text-white py-3 px-4 rounded-md hover:bg-pink-700 font-medium"
+            >
+              Create Venue
+            </button>
+          </div>
         </div>
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <ScreensSection
-            screens={formData.screens}
-            onScreenChange={handleScreenChange}
-            onSeatCategoryChange={handleSeatCategoryChange}
-            onAddScreen={addScreen}
-            onRemoveScreen={removeScreen}
-          />
-        </div>
-        <div>
-          <button
-            type="submit"
-            className="w-full bg-pink-600 text-white py-3 px-4 rounded-md hover:bg-pink-700 font-medium"
-          >
-            Create Venue
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }

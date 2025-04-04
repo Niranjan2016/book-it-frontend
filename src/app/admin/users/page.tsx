@@ -2,16 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface User {
+  [x: string]: string | number | Date;
   user_id: string;
-  name: string;
+  full_name: string;
   email: string;
   role: string;
-  created_at: string;
+  createdAt: string;
   status: string;
 }
 
+const roles = [
+  {
+    value: "venue_admin",
+    label: "Venue Admin",
+  },
+  {
+    value: "user",
+    label: "User",
+  },
+];
 export default function AdminUsersPage() {
   const { data: session } = useSession();
   const [users, setUsers] = useState<User[]>([]);
@@ -20,17 +32,20 @@ export default function AdminUsersPage() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/admin`, {
-          headers: {
-            'Authorization': `Bearer ${session?.user?.accessToken}`,
-          },
-        });
-        
-        if (!response.ok) throw new Error('Failed to fetch users');
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/venue-users`,
+          {
+            headers: {
+              Authorization: `Bearer ${session?.user?.accessToken}`,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch users");
         const data = await response.json();
         setUsers(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
         setUsers([]);
       } finally {
         setIsLoading(false);
@@ -52,7 +67,15 @@ export default function AdminUsersPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Users Management</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Users</h1>
+        <Link
+          href="/admin/users/create"
+          className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+        >
+          Add New User
+        </Link>
+      </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full">
@@ -79,25 +102,34 @@ export default function AdminUsersPage() {
             {users.map((user) => (
               <tr key={user.user_id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.name}
+                  {user.full_name}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {user.email}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {user.role}
+                  <span
+                    className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      user.role === "venue_admin"
+                        ? "bg-purple-100 text-purple-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
+                    {roles.find((role) => role.value === user.role)?.label ||
+                      user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {new Date(user.created_at).toLocaleDateString()}
+                  {new Date(user.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      user.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
                     {user.status}
                   </span>
                 </td>

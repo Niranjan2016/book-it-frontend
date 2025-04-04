@@ -5,7 +5,11 @@ interface ScreenFormProps {
   screen: Screen;
   index: number;
   onScreenChange: (field: keyof Screen, value: string) => void;
-  onSeatCategoryChange: (categoryIndex: number, field: keyof SeatCategory, value: string | number) => void;
+  onSeatCategoryChange: (
+    categoryIndex: number,
+    field: keyof SeatCategory,
+    value: string | number
+  ) => void;
   onRemove: () => void;
   canRemove: boolean;
 }
@@ -16,7 +20,7 @@ export function ScreenForm({
   onScreenChange,
   onSeatCategoryChange,
   onRemove,
-  canRemove
+  canRemove,
 }: ScreenFormProps) {
   // Update the screen form layout
   return (
@@ -33,7 +37,7 @@ export function ScreenForm({
           </button>
         )}
       </div>
-  
+
       <div className="flex gap-12">
         {/* Screen Details Section */}
         <div className="w-[45%]">
@@ -47,11 +51,10 @@ export function ScreenForm({
                 type="text"
                 value={screen.name}
                 onChange={(e) => onScreenChange("name", e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
-                required
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
               />
             </div>
-  
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Capacity
@@ -60,11 +63,10 @@ export function ScreenForm({
                 type="number"
                 value={screen.capacity}
                 onChange={(e) => onScreenChange("capacity", e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
-                required
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
               />
             </div>
-  
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Rows
@@ -73,11 +75,10 @@ export function ScreenForm({
                 type="number"
                 value={screen.rows}
                 onChange={(e) => onScreenChange("rows", e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
-                required
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
               />
             </div>
-  
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Seats per Row
@@ -85,12 +86,13 @@ export function ScreenForm({
               <input
                 type="number"
                 value={screen.seats_per_row}
-                onChange={(e) => onScreenChange("seats_per_row", e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
-                required
+                onChange={(e) =>
+                  onScreenChange("seats_per_row", e.target.value)
+                }
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
               />
             </div>
-  
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Base Price
@@ -99,13 +101,12 @@ export function ScreenForm({
                 type="number"
                 value={screen.base_price}
                 onChange={(e) => onScreenChange("base_price", e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-pink-500 focus:ring-pink-500"
-                required
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
               />
             </div>
           </div>
         </div>
-  
+
         {/* Seat Categories Section */}
         <div className="w-[55%] border-l pl-12">
           <h5 className="text-md font-medium mb-4">Seat Categories</h5>
@@ -114,7 +115,9 @@ export function ScreenForm({
               <SeatCategoryForm
                 key={categoryIndex}
                 category={category}
-                onCategoryChange={(field, value) => onSeatCategoryChange(categoryIndex, field, value)}
+                onCategoryChange={(field, value) =>
+                  onSeatCategoryChange(categoryIndex, field, value)
+                }
               />
             ))}
           </div>

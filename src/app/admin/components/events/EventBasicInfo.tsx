@@ -8,7 +8,7 @@ type EventFormData = {
   description: string;
   start_date: string;
   end_date: string;
-  event_date: string;  // Add this field
+  event_date: string; // Add this field
   ticket_price: string;
   venue_id: string;
   category_id: string;
@@ -38,8 +38,7 @@ export const EventBasicInfo = ({
         <select
           value={formData.venue_id}
           onChange={handleVenueChange}
-          className="w-full p-2 border border-gray-300 rounded-md"
-          required
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
         >
           <option value="">Select a venue</option>
           {venues.map((venue) => (
@@ -62,8 +61,7 @@ export const EventBasicInfo = ({
               event_name: e.target.value,
             })
           }
-          className="w-full p-2 border border-gray-300 rounded-md"
-          required
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
         />
       </div>
       <div>
@@ -78,8 +76,7 @@ export const EventBasicInfo = ({
               category_id: e.target.value,
             })
           }
-          className="w-full p-2 border border-gray-300 rounded-md"
-          required
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
         >
           <option value="">Select a category</option>
           {categories.map((category) => (
@@ -101,9 +98,8 @@ export const EventBasicInfo = ({
               description: e.target.value,
             })
           }
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
           rows={4}
-          required
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -111,18 +107,16 @@ export const EventBasicInfo = ({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Start Date
           </label>
-          {/* // Update the onChange handlers to use the correct type */}
           <input
-            type="datetime-local"
-            value={formData.start_date || ""}
+            type="date"
+            value={formData.start_date?.split("T")[0] || ""}
             onChange={(e) =>
               setFormData({
                 ...formData,
                 start_date: e.target.value,
               })
             }
-            className="w-full p-2 border border-gray-300 rounded-md"
-            required
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
           />
         </div>
         <div>
@@ -130,17 +124,16 @@ export const EventBasicInfo = ({
             End Date
           </label>
           <input
-            type="datetime-local"
-            value={formData.end_date || ""}
+            type="date"
+            value={formData.end_date?.split("T")[0] || ""}
             onChange={(e) =>
               setFormData({
                 ...formData,
                 end_date: e.target.value,
               })
             }
-            min={formData.start_date || ""}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            required
+            min={formData.start_date?.split("T")[0] || ""}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
           />
         </div>
       </div>
@@ -157,9 +150,8 @@ export const EventBasicInfo = ({
               ticket_price: e.target.value,
             })
           }
-          className="w-full p-2 border border-gray-300 rounded-md"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
           min="0"
-          required
         />
       </div>
     </>

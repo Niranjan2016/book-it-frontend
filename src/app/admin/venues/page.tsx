@@ -76,7 +76,7 @@ export default function AdminVenuesPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-black">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Venues</h1>
         <Link

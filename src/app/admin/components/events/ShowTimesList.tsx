@@ -55,8 +55,7 @@ export const ShowTimesList = ({
               onChange={(e) =>
                 updateShowTime(index, "screen_id", e.target.value)
               }
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             >
               <option value="">Select a screen</option>
               {screens.map((screen) => (
@@ -77,8 +76,7 @@ export const ShowTimesList = ({
               onChange={(e) =>
                 updateShowTime(index, "start_time", e.target.value)
               }
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
             />
           </div>
 
@@ -92,9 +90,8 @@ export const ShowTimesList = ({
               onChange={(e) =>
                 updateShowTime(index, "available_seats", e.target.value)
               }
-              className="w-full p-2 border border-gray-300 rounded-md"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
               min="1"
-              required
             />
           </div>
 
