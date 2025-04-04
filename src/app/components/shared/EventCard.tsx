@@ -26,6 +26,11 @@ export const EventCard = ({ event, venueName }: EventCardProps) => (
       <h3 className="text-xl font-bold text-gray-800 mb-3">
         {event.event_name}
       </h3>
+      {event.description && (
+        <h5 className="text-xl font-bold text-gray-800 mb-3">
+          {event.description}
+        </h5>
+      )}
 
       <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
         {venueName && (

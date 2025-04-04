@@ -23,17 +23,20 @@ export default function NewVenuePage() {
     setError("");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/venues`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.user?.accessToken}`,
-        },
-        body: JSON.stringify({
-          ...formData,
-          capacity: parseInt(formData.capacity),
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/venues`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+          },
+          body: JSON.stringify({
+            ...formData,
+            capacity: parseInt(formData.capacity),
+          }),
+        }
+      );
 
       if (response.ok) {
         router.push("/admin/dashboard");
@@ -53,7 +56,9 @@ export default function NewVenuePage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-2xl">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Add New Venue</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+            Add New Venue
+          </h1>
 
           {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">

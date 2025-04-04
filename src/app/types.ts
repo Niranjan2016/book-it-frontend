@@ -18,3 +18,10 @@ export interface FeaturedEvent {
     image_url: string;
   };
 }
+
+export interface CustomSession {
+  user: {
+    accessToken: string;
+    [key: string]: unknown;
+  };
+}

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { CustomSession } from "@/app/types";
 
 interface Venue {
   venue_id: string;
@@ -14,15 +15,14 @@ interface Venue {
 }
 
 export default function AdminVenuesPage() {
-  const { data: session } = useSession();
+  const { data: session } = useSession() as { data: CustomSession | null };
   const [venues, setVenues] = useState<Venue[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!session?.user?.accessToken) {
           throw new Error("No authentication token found");
         }
 
@@ -31,7 +31,7 @@ export default function AdminVenuesPage() {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${session.user.accessToken}`,
               "Content-Type": "application/json",
             },
             credentials: "include",
@@ -76,7 +76,7 @@ export default function AdminVenuesPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-black">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">My Venues</h1>
         <Link

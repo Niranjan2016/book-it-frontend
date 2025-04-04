@@ -4,10 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react"; // Add useEffect
-import { useRouter } from "next/navigation";
 
 export const Header = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const { data: session, status } = useSession();
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,31 +19,14 @@ export const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       const searchTerm = encodeURIComponent(searchQuery.trim());
-      // Navigate to home page with search query
-      router.push(`/?search=${searchTerm}`);
-
-      // Clear search input after navigation
+      window.location.href = `/?search=${searchTerm}`;
       setSearchQuery("");
     }
   };
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/" });
+    await signOut({ callbackUrl: "/login" });
   };
-  // const handleSearch = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (searchQuery.trim()) {
-  //     const searchTerm = encodeURIComponent(searchQuery.trim());
-  //     // Use window.history.pushState to update URL without full page reload
-  //     const newUrl = `/?search=${searchTerm}`;
-  //     console.log("New URL:", newUrl);
-  //     window.history.pushState({ path: newUrl }, "", newUrl);
-
-  //     // Dispatch a custom event to notify about URL change
-  //     const event = new Event("pushstate");
-  //     window.dispatchEvent(event);
-  //   }
-  // };
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-8 py-4 flex items-center">
@@ -88,26 +70,40 @@ export const Header = () => {
             </div>
           </form>
         </div>
-
         {/* Navigation - Right */}
         <div className="flex-none flex items-center gap-4">
-          <Link href="/about" className="text-gray-600 hover:text-pink-600 transition-colors">
+          <Link
+            href="/about"
+            className="text-gray-600 hover:text-pink-600 transition-colors"
+          >
             About
           </Link>
           {isAuthenticated ? (
             <>
-              <Link href="/dashboard" className="text-gray-600 hover:text-pink-600 transition-colors">
+              <Link
+                href="/dashboard"
+                className="text-gray-600 hover:text-pink-600 transition-colors"
+              >
                 Dashboard
               </Link>
-              <Link href="/profile" className="text-gray-600 hover:text-pink-600 transition-colors">
+              <Link
+                href="/profile"
+                className="text-gray-600 hover:text-pink-600 transition-colors"
+              >
                 My Profile
               </Link>
-              <button onClick={handleLogout} className="px-4 py-2 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition-colors">
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition-colors"
+              >
                 Logout
               </button>
             </>
           ) : (
-            <Link href="/login" className="px-4 py-2 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition-colors">
+            <Link
+              href="/login"
+              className="px-4 py-2 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition-colors"
+            >
               Login
             </Link>
           )}

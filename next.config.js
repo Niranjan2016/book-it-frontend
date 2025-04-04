@@ -1,7 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  fastRefresh: true,
+  // fastRefresh: true,
+  experimental: {
+    turbo: {
+      loaders: {
+        sourceMaps: ['.js', '.jsx', '.ts', '.tsx']
+      },
+      watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000,
+        ignored: ['**/node_modules', '**/.next', '**/out'],
+      }
+    }
+  },
   webpack: (config) => {
     config.watchOptions = {
       poll: 1000,
@@ -10,18 +22,6 @@ const nextConfig = {
     return config;
   },
   images: {
-    domains: ['www.europeanbusinessreview.com',
-      'images.unsplash.com',
-      'via.placeholder.com',
-      'localhost',
-      'encrypted-tbn0.gstatic.com',
-      'images.unsplash.com',
-      'www.unesco.org',
-      'miro.medium.com',
-      'img.freepik.com',
-      'plutuseducation.com',  // Added new domain
-      'www.itsholidaysltd.com'
-    ],
     remotePatterns: [
       {
         protocol: 'http',

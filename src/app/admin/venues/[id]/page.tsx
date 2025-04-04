@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { CustomSession } from "@/app/types";
 
 interface Venue {
   venue_id: string;
@@ -18,7 +19,7 @@ interface Venue {
 
 export default function VenueDetailsPage() {
   // Move all state declarations together at the top
-  const { data: session } = useSession();
+  const { data: session } = useSession() as { data: CustomSession | null };
   const params = useParams();
   const [venue, setVenue] = useState<Venue | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -158,14 +159,14 @@ export default function VenueDetailsPage() {
 
   if (!venue) {
     return (
-      <div className="p-6">
+      <div className="p-6 text-black">
         <p className="text-red-600">Venue not found</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 text-black">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Venue Details</h1>
         <button

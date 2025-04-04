@@ -22,7 +22,9 @@ export default function AdminEventsPage() {
           `${process.env.NEXT_PUBLIC_API_URL}/events/admin`,
           {
             headers: {
-              Authorization: `Bearer ${session?.user?.accessToken}`,
+              Authorization: `Bearer ${
+                (session?.user as { accessToken?: string })?.accessToken
+              }`,
               "Content-Type": "application/json",
             },
             signal,
@@ -55,7 +57,7 @@ export default function AdminEventsPage() {
       }
     };
 
-    if (session?.user?.accessToken) {
+    if ((session?.user as { accessToken?: string })?.accessToken) {
       setIsLoading(true);
       fetchEvents();
     }
@@ -196,31 +198,33 @@ export default function AdminEventsPage() {
                     ₹{parseFloat(String(event.ticket_price)).toFixed(2)}
                   </span>
                 </div>
-                {event.show_times && event.show_times.length > 0 && event.screen && (
-                  <div>
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                      Show Times
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {event.show_times.map((showTime, index) => (
-                        <div
-                          key={index}
-                          className="bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm hover:bg-gray-100 transition-colors"
-                        >
-                          <p className="font-medium text-gray-800 mb-1">
-                            {String(showTime.time)}
-                          </p>
-                          <p className="text-xs text-gray-600">
-                            {event.screen.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {showTime.available_seats} seats left
-                          </p>
-                        </div>
-                      ))}
+                {event.showTimes &&
+                  event.showTimes.length > 0 &&
+                  event.screen && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                        Show Times
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {event.showTimes.map((showTime, index) => (
+                          <div
+                            key={index}
+                            className="bg-gray-50 border border-gray-200 rounded-lg p-2 text-sm hover:bg-gray-100 transition-colors"
+                          >
+                            <p className="font-medium text-gray-800 mb-1">
+                              {String(showTime.start_time)}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {event.screen.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {showTime.available_seats} seats left
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 <div className="mt-6 text-right">
                   <Link

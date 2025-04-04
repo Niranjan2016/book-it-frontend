@@ -101,7 +101,7 @@ function HomeContent() {
           event_type: event.event_type || "general",
           status: event.status || "active",
           available_seats: Number(event.available_seats || 0),
-          show_times: event.show_times || [],
+          show_times: event.showTimes || [],
           screens: event.screen || [],
           isUpcoming: true,
         }));
@@ -120,7 +120,7 @@ function HomeContent() {
           )
           .sort(() => Math.random() - 0.5)
           .slice(0, 6);
-        console.log(venuesData);
+        // console.log(venuesData);
         const categories = (categoriesData || []).map((category: Category) => ({
           id: category.category_id,
           name: category.name,
@@ -163,18 +163,18 @@ function HomeContent() {
   useEffect(() => {
     const handleSearch = () => {
       const query = searchParams.get("search");
-      console.log("Current search query:", query);
-      console.log("Available events:", data.events.length);
+      // console.log("Current search query:", query);
+      // console.log("Available events:", data.events.length);
 
       if (query && query.trim()) {
-        const filteredEvents = data.events.filter((event) => {
+        data.events.filter((event) => {
           const eventTitle = String(
             event.title || event.event_name || ""
           ).toLowerCase();
           const searchTerm = query.toLowerCase().trim();
           return eventTitle.includes(searchTerm);
         });
-        console.log("Filtered events:", filteredEvents);
+        // console.log("Filtered events:", filteredEvents);
         setShowResults(true);
       } else {
         setShowResults(false);

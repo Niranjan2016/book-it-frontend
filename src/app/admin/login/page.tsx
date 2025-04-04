@@ -15,8 +15,9 @@ export default function AdminLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     try {
+      // lets call the signin with credentials from next-auth
       const result = await signIn("credentials", {
         email: formData.email,
         password: formData.password,
@@ -26,9 +27,11 @@ export default function AdminLoginPage() {
       });
 
       if (result?.error) {
-        setError(result.error === "CredentialsSignin" 
-          ? "Invalid email or password" 
-          : result.error);
+        setError(
+          result.error === "CredentialsSignin"
+            ? "Invalid email or password"
+            : result.error
+        );
         return;
       }
 
@@ -70,7 +73,7 @@ export default function AdminLoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-black"
                 required
               />
             </div>
@@ -88,7 +91,7 @@ export default function AdminLoginPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all text-black"
                 required
               />
             </div>

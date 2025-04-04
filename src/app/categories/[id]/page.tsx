@@ -92,15 +92,22 @@ export default function CategoryPage() {
               date: event.event_date,
               location: event.Venue?.location || event.location || "",
               show_times: event.show_times || [],
+              showTimes: event.showTimes || [],
               screen: event.screen || [],
               status: event.status || "active",
               isUpcoming: true,
             }))
           : [];
         setEvents(formattedEvents);
-        setTotalPages(Math.ceil((eventsData.total || eventsList.length) / eventsPerPage));
+        setTotalPages(
+          Math.ceil((eventsData.total || eventsList.length) / eventsPerPage)
+        );
       } catch (error) {
-        if (error instanceof Error && error.name !== "AbortError" && isMounted) {
+        if (
+          error instanceof Error &&
+          error.name !== "AbortError" &&
+          isMounted
+        ) {
           console.error("Error fetching data:", error);
           setEvents([]);
         }
@@ -136,7 +143,7 @@ export default function CategoryPage() {
     setCurrentPage(1); // Reset to first page when category changes
   };
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8 text-black">
       <div className="container mx-auto px-4">
         <div className="mb-6">
           <BackButton />

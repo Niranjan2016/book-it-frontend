@@ -8,7 +8,7 @@ interface CategoriesProps {
 
 export const Categories = ({ categories }: CategoriesProps) => {
   return (
-    <section className="py-12 bg-white">
+    <section className="py-12 bg-white text-black">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-semibold mb-8">Browse by Category</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

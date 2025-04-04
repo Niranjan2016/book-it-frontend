@@ -1,5 +1,18 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { JWT } from "next-auth/jwt";
+
+// Add custom type definitions
+interface CustomUser {
+  id: string;
+  email: string;
+  name: string;
+  accessToken: string;
+}
+
+interface CustomJWT extends JWT {
+  accessToken?: string;
+}
 
 const handler = NextAuth({
   providers: [
@@ -11,11 +24,14 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(credentials),
-          });
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(credentials),
+            }
+          );
 
           const data = await res.json();
 
@@ -41,13 +57,15 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.accessToken;
+        token.accessToken = (user as CustomUser).accessToken;
       }
-      return token;
+      return token as CustomJWT;
     },
     async session({ session, token }) {
       if (session?.user) {
-        session.user.accessToken = token.accessToken;
+        (session.user as { accessToken?: string }).accessToken = (
+          token as CustomJWT
+        ).accessToken;
       }
       return session;
     },
