@@ -48,6 +48,7 @@ export default function CreateEvent() {
     }>
   >([]);
 
+  //fetchscreens function is used to fetch screens based on the selected venue
   const fetchScreens = async (venueId: string) => {
     try {
       const token = localStorage.getItem("token");
@@ -203,7 +204,7 @@ export default function CreateEvent() {
 
     try {
       if (!session?.user?.accessToken) {
-        throw new Error("No authentication token found");
+        toast.error("No authentication token found");
       }
 
       const eventFormData = new FormData();
@@ -237,7 +238,7 @@ export default function CreateEvent() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create event");
+        toast.error(errorData.message || "Failed to create event");
       }
 
       toast.success("Event created successfully!");

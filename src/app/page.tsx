@@ -193,7 +193,7 @@ function HomeContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50" key="home-page">
+    <div className="min-h-screen bg-gray-50 text-black" key="home-page">
       <div className="relative">
         <Hero />
       </div>
