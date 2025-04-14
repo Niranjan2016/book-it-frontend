@@ -28,55 +28,88 @@ export default function AdminUsersPage() {
   const { data: session } = useSession();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    itemsPerPage: 10,
+  });
+
+  // Add search state
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Update fetch function to include search
+  const fetchUsers = async (page: number = 1) => {
+    try {
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL
+        }/users/venue-users?page=${page}&limit=${
+          pagination.itemsPerPage
+        }&search=${encodeURIComponent(searchTerm)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.user?.accessToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const data = await response.json();
+      setUsers(data.users);
+      setPagination({
+        currentPage: data.currentPage,
+        totalPages: data.totalPages,
+        totalItems: data.totalItems,
+        itemsPerPage: data.itemsPerPage,
+      });
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setUsers([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/venue-users`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.user?.accessToken}`,
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error("Failed to fetch users");
-        const data = await response.json();
-        setUsers(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        setUsers([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (session?.user?.accessToken) {
       fetchUsers();
     }
   }, [session]);
+  // Add debounced search effect
+  useEffect(() => {
+    if (searchTerm.length >= 3 || searchTerm.length === 0) {
+      const delayDebounceFn = setTimeout(() => {
+        if (session?.user?.accessToken) {
+          fetchUsers(1); // Reset to first page when searching
+        }
+      }, 500);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pink-600"></div>
-      </div>
-    );
-  }
+      return () => clearTimeout(delayDebounceFn);
+    }
+  }, [searchTerm]);
 
+  // Add after the table component, before the closing div
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Users</h1>
-        <Link
-          href="/admin/users/create"
-          className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
-        >
-          Add New User
-        </Link>
+        <h1 className="text-2xl font-bold text-gray-800">Venue Users</h1>
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Search users (minimum 3 characters)..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 w-64"
+          />
+          <Link
+            href="/admin/users/create"
+            className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+          >
+            Add New User
+          </Link>
+        </div>
       </div>
-
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="min-w-full">
           <thead className="bg-gray-50">
@@ -143,6 +176,44 @@ export default function AdminUsersPage() {
             <p className="text-gray-500">No users found.</p>
           </div>
         )}
+      </div>
+      {/* Add pagination controls */}
+      <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-700">
+            Showing {(pagination.currentPage - 1) * pagination.itemsPerPage + 1}{" "}
+            to{" "}
+            {Math.min(
+              pagination.currentPage * pagination.itemsPerPage,
+              pagination.totalItems
+            )}{" "}
+            of {pagination.totalItems} users
+          </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => fetchUsers(pagination.currentPage - 1)}
+              disabled={pagination.currentPage === 1}
+              className={`px-3 py-1 rounded ${
+                pagination.currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-pink-500 text-white hover:bg-pink-600"
+              }`}
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => fetchUsers(pagination.currentPage + 1)}
+              disabled={pagination.currentPage === pagination.totalPages}
+              className={`px-3 py-1 rounded ${
+                pagination.currentPage === pagination.totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-pink-500 text-white hover:bg-pink-600"
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

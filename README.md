@@ -1,6 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Book-it Frontend
+
+A modern event booking platform built with Next.js 13, TypeScript, and Tailwind CSS.
+
+## Features
+
+- User Authentication & Authorization
+- Admin Dashboard
+- Venue Management
+- Event Management
+- Booking System
+- User Management
+- Responsive Design
+
+## Tech Stack
+
+- Next.js 13 (App Router)
+- TypeScript
+- Tailwind CSS
+- NextAuth.js
+- React Hot Toast
 
 ## Getting Started
+
+### Prerequisites
+
+- Node.js 16.8 or later
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/your-username/book-it-frontend.git
+```
 
 First, run the development server:
 

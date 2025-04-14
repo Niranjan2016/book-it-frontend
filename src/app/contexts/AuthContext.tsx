@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | null>(null); // Add this lin
 export function AuthProvider({ children }: { children: ReactNode }) {
   // Initialize isAuthenticated based on token existence
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return !!localStorage.getItem("token");
     }
     return false;
@@ -27,9 +27,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      console.log("Initializing auth...");
+      // console.log("Initializing auth...");
       const token = localStorage.getItem("token");
-      console.log("Current auth state:", { hasToken: !!token, isAuthenticated });
+      // console.log("Current auth state:", { hasToken: !!token, isAuthenticated });
 
       if (token) {
         try {
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (tokenParts.length === 3) {
             const payload = JSON.parse(atob(tokenParts[1]));
             console.log("Token payload:", payload);
-            
+
             if (payload.exp && payload.exp * 1000 > Date.now()) {
               setIsAuthenticated(true);
             } else {
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   const login = (token: string) => {
     if (token) {
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
       setIsAuthenticated(true);
     }
   };
@@ -68,10 +68,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false);
   };
   const getToken = () => {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   };
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, getToken }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, isLoading, login, logout, getToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

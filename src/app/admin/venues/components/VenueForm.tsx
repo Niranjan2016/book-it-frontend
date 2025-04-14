@@ -175,7 +175,7 @@ export default function VenueForm() {
       console.log("formData", formData);
       // Validate screens data
       if (formData.screens.length === 0) {
-        throw new Error("At least one screen is required");
+        toast.error("At least one screen is required");
       }
 
       const formDataToSend = new FormData();
@@ -221,7 +221,7 @@ export default function VenueForm() {
 
       if (!response.ok) {
         const errorData = await response.text();
-        throw new Error(errorData);
+        toast.error(errorData);
       }
 
       toast.success("Venue created successfully!");

@@ -10,26 +10,32 @@ interface Venue {
   name: string;
 }
 
+type FormDataType = {
+  full_name: string;
+  email: string;
+  password: string;
+  venue_id: string | null;
+  phone: string;
+  role: string; // Add role
+};
 export default function CreateUser() {
   const router = useRouter();
   const { data: session } = useSession();
   const [venues, setVenues] = useState<Venue[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     full_name: "",
     email: "",
     password: "",
-    venue_id: "",
+    venue_id: null,
     phone: "",
     role: "", // Add role field
   });
 
   const roles = [
-    // { value: 'superadmin', label: 'Super Admin' },
     { value: "venue_admin", label: "Venue Admin" },
     { value: "venue_employee", label: "Venue Employee" },
-    { value: "user", label: "User" },
   ];
 
   useEffect(() => {
@@ -62,11 +68,19 @@ export default function CreateUser() {
     e.preventDefault();
     setError("");
 
+    // Create a copy of formData to modify
+    const submissionData = { ...formData };
+    console.log(formData);
+    // Set venue_id to null for user role
+    if (submissionData.role === "user") {
+      submissionData.venue_id = null;
+    }
+
     // Collect all empty field errors
     const missingFields = [];
     const newFieldErrors: Record<string, boolean> = {};
 
-    if (!formData.full_name.trim()) {
+    if (!submissionData.full_name.trim()) {
       missingFields.push("Name");
       newFieldErrors.full_name = true;
     }
@@ -86,11 +100,10 @@ export default function CreateUser() {
       missingFields.push("Role");
       newFieldErrors.role = true;
     }
-    if (!formData.venue_id) {
+    if (submissionData.role !== "user" && !submissionData.venue_id) {
       missingFields.push("Venue");
       newFieldErrors.venue_id = true;
     }
-
     setFieldErrors(newFieldErrors);
 
     if (missingFields.length > 0) {
@@ -116,13 +129,13 @@ export default function CreateUser() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${session?.user?.accessToken}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(submissionData), // Use the modified data
         }
       );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create user");
+        toast.error(errorData.message || "Failed to create user");
       }
 
       toast.success("User created successfully!");
@@ -272,30 +285,31 @@ export default function CreateUser() {
             ))}
           </select>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Venue
-          </label>
-          <select
-            value={formData.venue_id}
-            onChange={(e) =>
-              setFormData({ ...formData, venue_id: e.target.value })
-            }
-            className={`w-full p-2 border rounded-md ${
-              fieldErrors.email
-                ? "border-pink-700 focus:ring-pink-700 border-2"
-                : "border-gray-300"
-            }`}
-          >
-            <option value="">Select a venue</option>
-            {venues.map((venue) => (
-              <option key={venue.venue_id} value={venue.venue_id}>
-                {venue.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        {formData.role !== "user" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Venue
+            </label>
+            <select
+              value={formData.venue_id || 0}
+              onChange={(e) =>
+                setFormData({ ...formData, venue_id: e.target.value })
+              }
+              className={`w-full p-2 border rounded-md ${
+                fieldErrors.email
+                  ? "border-pink-700 focus:ring-pink-700 border-2"
+                  : "border-gray-300"
+              }`}
+            >
+              <option value="">Select a venue</option>
+              {venues.map((venue) => (
+                <option key={venue.venue_id} value={venue.venue_id}>
+                  {venue.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="flex justify-end space-x-4">
           <button
